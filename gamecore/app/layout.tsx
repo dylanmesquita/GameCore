@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Syne, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/components/AuthProvider";
+import { AuthModal } from "@/components/AuthModal";
 
 const syne = Syne({
   variable: "--font-sans",
@@ -33,7 +35,12 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${syne.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AuthProvider>
+          {children}
+          <AuthModal />
+        </AuthProvider>
+      </body>
     </html>
   );
 }

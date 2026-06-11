@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Star, MessageSquare, ShieldAlert, Calendar, Users } from "lucide-react";
+import { ArrowLeft, Star, Calendar, Users } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Comments } from "@/components/Comments";
+import { SaveButton } from "@/components/SaveButton";
 
 const API_KEY = "2843b69740b44def938ac6a8fe2b5c9f";
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -145,6 +147,18 @@ export default function GamePage() {
                 {new Date(game.released).getFullYear()}
               </span>
             )}
+
+            {/* Salvar na biblioteca */}
+            <SaveButton
+              variant="full"
+              className="ml-1"
+              game={{
+                gameId: game.id,
+                name: game.name,
+                background_image: game.background_image,
+                rating: game.rating,
+              }}
+            />
           </motion.div>
         </div>
       </div>
@@ -165,32 +179,7 @@ export default function GamePage() {
           </section>
 
           {/* Community discussion */}
-          <section className="pt-10 border-t border-white/5">
-            <h2 className="text-xs font-mono font-bold tracking-[0.2em] uppercase text-zinc-600 mb-6 flex items-center gap-2">
-              <MessageSquare size={12} />
-              Discussão da Comunidade
-            </h2>
-            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 flex gap-4">
-              <div className="w-9 h-9 rounded-full bg-white/5 border border-white/8 flex-shrink-0" />
-              <div className="flex-1">
-                <textarea
-                  disabled
-                  placeholder="Você precisa fazer login para participar da discussão..."
-                  className="w-full bg-transparent text-sm resize-none focus:outline-none text-zinc-500 placeholder:text-zinc-700 font-light"
-                  rows={2}
-                />
-                <div className="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
-                  <span className="text-[10px] text-zinc-700 flex items-center gap-1 font-mono uppercase tracking-wider">
-                    <ShieldAlert size={10} />
-                    Auth necessária
-                  </span>
-                  <button disabled className="text-xs font-bold bg-white/5 text-zinc-600 px-4 py-1.5 rounded-full cursor-not-allowed">
-                    Publicar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
+          <Comments gameId={game.id} />
         </div>
 
         {/* Right column */}

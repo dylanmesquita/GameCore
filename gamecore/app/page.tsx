@@ -49,8 +49,14 @@ export default function GameCore() {
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      let url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=${PAGE_SIZE}&ordering=-rating&page=${currentPage}`;
-      if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+      let url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=${PAGE_SIZE}&page=${currentPage}`;
+      if (searchQuery) {
+        // Ao buscar, deixamos a RAWG ordenar por relevância (não por nota),
+        // senão os resultados mais "famosos" sobrepõem os mais relevantes.
+        url += `&search=${encodeURIComponent(searchQuery)}&search_precise=true`;
+      } else {
+        url += `&ordering=-rating`;
+      }
       if (activeGenre) url += `&genres=${activeGenre}`;
 
       fetch(url)

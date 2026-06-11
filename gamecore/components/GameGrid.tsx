@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Play, Plus } from "lucide-react";
+import { Star, Play } from "lucide-react";
 import Link from "next/link";
+import { SaveButton } from "@/components/SaveButton";
 
 export interface Game {
   id: number;
@@ -120,15 +121,14 @@ export function GameGrid({ games, loading }: GameGridProps) {
                       {/* Hover UI */}
                       <div className="absolute inset-0 p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-400">
                         <div className="flex justify-end">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              console.log(`Jogo ${game.id} adicionado aos favoritos`);
+                          <SaveButton
+                            game={{
+                              gameId: game.id,
+                              name: game.name,
+                              background_image: game.background_image,
+                              rating: game.rating,
                             }}
-                            className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-[#CBFF4E] hover:text-black hover:border-[#CBFF4E] transition-all duration-200"
-                          >
-                            <Plus size={14} />
-                          </button>
+                          />
                         </div>
 
                         <div className="flex justify-center mb-6">
