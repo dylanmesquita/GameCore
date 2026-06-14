@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, Command } from "lucide-react";
 
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -28,9 +28,10 @@ export function HeroSearch({ searchQuery, setSearchQuery }: HeroSearchProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6, ease }}
-          className="text-[#CBFF4E] text-xs font-mono font-bold tracking-[0.25em] uppercase mb-4"
+          className="inline-flex items-center gap-2 text-[#CBFF4E] text-xs font-mono font-bold tracking-[0.25em] uppercase mb-5 border border-[#CBFF4E]/20 bg-[#CBFF4E]/[0.04] rounded-full px-3 py-1.5"
         >
-          ▸ Catálogo Global
+          <span className="w-1 h-1 rounded-full bg-[#CBFF4E] animate-gc-pulse" />
+          Catálogo Global
         </motion.p>
 
         <motion.h1
@@ -40,7 +41,8 @@ export function HeroSearch({ searchQuery, setSearchQuery }: HeroSearchProps) {
           className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6 leading-[0.95]"
         >
           O ecossistema <br />
-          <span className="text-zinc-600">definitivo de jogos.</span>
+          <span className="text-accent-gradient">definitivo</span>{" "}
+          <span className="text-zinc-600">de jogos.</span>
         </motion.h1>
 
         <motion.div
@@ -49,7 +51,9 @@ export function HeroSearch({ searchQuery, setSearchQuery }: HeroSearchProps) {
           transition={{ delay: 0.35, duration: 0.7, ease }}
           className="relative group max-w-xl mb-8"
         >
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          {/* Glow ativo no focus */}
+          <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-[#CBFF4E]/0 via-[#CBFF4E]/0 to-[#CBFF4E]/0 group-focus-within:from-[#CBFF4E]/20 group-focus-within:via-[#CBFF4E]/5 group-focus-within:to-[#CBFF4E]/20 blur-md transition-all duration-500 pointer-events-none" />
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-10">
             <Search size={16} className="text-zinc-500 group-focus-within:text-[#CBFF4E] transition-colors duration-300" />
           </div>
           <input
@@ -57,15 +61,21 @@ export function HeroSearch({ searchQuery, setSearchQuery }: HeroSearchProps) {
             placeholder="Buscar títulos, estúdios ou coleções..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/[0.04] border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#CBFF4E]/40 focus:bg-white/[0.06] transition-all duration-300 shadow-2xl"
+            className="relative w-full bg-white/[0.04] border border-white/10 rounded-2xl py-4 pl-12 pr-16 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#CBFF4E]/40 focus:bg-white/[0.06] transition-all duration-300 shadow-2xl"
           />
+          <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none z-10">
+            <div className="flex items-center gap-1 text-zinc-600 border border-white/10 px-2 py-1 rounded-md bg-black/40">
+              <Command size={11} />
+              <span className="text-[10px] font-mono font-bold">K</span>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.55, duration: 0.6 }}
-          className="flex items-center gap-6"
+          className="flex items-center gap-5"
         >
           {stats.map((stat, i) => (
             <motion.div
@@ -75,7 +85,7 @@ export function HeroSearch({ searchQuery, setSearchQuery }: HeroSearchProps) {
               transition={{ delay: 0.55 + i * 0.08, duration: 0.5, ease }}
               className="flex items-baseline gap-1.5"
             >
-              <span className="text-base font-mono font-bold text-white">{stat.value}</span>
+              <span className="text-base font-mono font-bold text-white tabular-nums">{stat.value}</span>
               <span className="text-xs text-zinc-600 font-medium">{stat.label}</span>
             </motion.div>
           ))}

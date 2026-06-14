@@ -85,12 +85,18 @@ export default function GameCore() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white/20">
-      {/* Noise texture */}
-      <div className="fixed inset-0 z-0 opacity-[0.15] pointer-events-none mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-      {/* Grid pattern */}
+      
       <div className="fixed inset-0 z-0 pointer-events-none bg-grid-pattern" />
-      {/* Atmospheric blur sphere */}
-      <div className="fixed top-[-20%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[#CBFF4E]/[0.03] blur-[140px] pointer-events-none z-0 rounded-full" />
+      
+      <div className="fixed top-[-20%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[#CBFF4E]/[0.04] blur-[140px] pointer-events-none z-0 rounded-full" />
+      
+      <div className="fixed top-[30%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/[0.04] blur-[160px] pointer-events-none z-0 rounded-full" />
+      
+      <div className="fixed inset-0 z-0 opacity-[0.15] pointer-events-none mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      
+      <div className="fixed inset-0 z-0 pointer-events-none bg-scanlines opacity-40" />
+      
+      <div className="fixed inset-0 z-0 pointer-events-none bg-vignette" />
 
       <Navbar />
 

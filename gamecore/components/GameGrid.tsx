@@ -17,7 +17,7 @@ export interface Game {
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const getGlowColor = (rating: number) => {
-  if (rating >= 4.5) return "rgba(203, 255, 78, 0.12)";
+  if (rating >= 4.5) return "rgba(203, 255, 78, 0.14)";
   if (rating >= 4.0) return "rgba(251, 191, 36, 0.10)";
   return "rgba(100, 100, 100, 0.08)";
 };
@@ -70,6 +70,7 @@ export function GameGrid({ games, loading }: GameGridProps) {
           const isHovered = hoveredGameId === game.id;
           const isAnyHovered = hoveredGameId !== null;
           const isDimmed = isAnyHovered && !isHovered;
+          const rank = String(index + 1).padStart(2, "0");
 
           return (
             /* Entrance wrapper — staggered on load */
@@ -105,8 +106,11 @@ export function GameGrid({ games, loading }: GameGridProps) {
                   <motion.div
                     animate={{ y: isHovered ? -8 : 0 }}
                     transition={{ duration: 0.4, ease }}
-                    className="group relative flex flex-col bg-[#050505] rounded-xl border border-white/[0.06] overflow-hidden cursor-pointer h-full hover:border-white/10 transition-colors duration-500"
+                    className="group relative flex flex-col bg-[#050505] rounded-xl border border-white/[0.06] overflow-hidden cursor-pointer h-full hover:border-[#CBFF4E]/20 transition-colors duration-500"
                   >
+                    {/* Scan line de acento no topo */}
+                    <div className="absolute top-0 left-0 right-0 h-px z-20 bg-gradient-to-r from-transparent via-[#CBFF4E]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
                     <div className="relative aspect-[4/5] overflow-hidden bg-[#0A0A0A]">
                       <motion.img
                         src={game.background_image || "/api/placeholder/400/500"}
@@ -117,6 +121,21 @@ export function GameGrid({ games, loading }: GameGridProps) {
                       />
 
                       <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity duration-700 ${isHovered ? "opacity-100" : "opacity-70"}`} />
+
+                      {/* Brackets de HUD — cantos */}
+                      <div className="absolute inset-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none">
+                        <span className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#CBFF4E]/70 rounded-tl-sm" />
+                        <span className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#CBFF4E]/70 rounded-tr-sm" />
+                        <span className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#CBFF4E]/70 rounded-bl-sm" />
+                        <span className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#CBFF4E]/70 rounded-br-sm" />
+                      </div>
+
+                      {/* Índice de ranking */}
+                      <div className="absolute top-3 left-3 z-10">
+                        <span className="font-mono text-[10px] font-bold text-white/40 group-hover:text-[#CBFF4E] transition-colors duration-300 tracking-widest">
+                          #{rank}
+                        </span>
+                      </div>
 
                       {/* Hover UI */}
                       <div className="absolute inset-0 p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-400">
@@ -132,8 +151,8 @@ export function GameGrid({ games, loading }: GameGridProps) {
                         </div>
 
                         <div className="flex justify-center mb-6">
-                          <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
-                            <Play size={18} className="text-white ml-0.5" fill="white" />
+                          <div className="w-12 h-12 rounded-full bg-[#CBFF4E]/10 backdrop-blur-md border border-[#CBFF4E]/30 flex items-center justify-center scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
+                            <Play size={18} className="text-[#CBFF4E] ml-0.5" fill="currentColor" />
                           </div>
                         </div>
                       </div>
@@ -142,10 +161,10 @@ export function GameGrid({ games, loading }: GameGridProps) {
                     {/* Card info */}
                     <div className="p-4 bg-[#050505] group-hover:bg-[#080808] transition-colors duration-500 flex-1 flex flex-col justify-end">
                       <div className="flex justify-between items-start gap-2 mb-1.5">
-                        <h3 className="text-sm font-bold tracking-tight text-white line-clamp-1">
+                        <h3 className="text-sm font-bold tracking-tight text-white line-clamp-1 group-hover:text-[#CBFF4E] transition-colors duration-300">
                           {game.name}
                         </h3>
-                        <span className={`flex items-center gap-1 text-[11px] font-mono font-bold shrink-0 ${getRatingColor(game.rating)}`}>
+                        <span className={`flex items-center gap-1 text-[11px] font-mono font-bold shrink-0 tabular-nums ${getRatingColor(game.rating)}`}>
                           <Star size={9} fill="currentColor" />
                           {game.rating.toFixed(1)}
                         </span>

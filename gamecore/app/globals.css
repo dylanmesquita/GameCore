@@ -143,4 +143,38 @@
     linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
+/* Vignette para foco central */
+.bg-vignette {
+  background: radial-gradient(ellipse 100% 100% at 50% 0%, transparent 40%, rgba(0,0,0,0.6) 100%);
+}
+
+/* Scanlines sutis — estética HUD/CRT */
+.bg-scanlines {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.015) 0px,
+    rgba(255, 255, 255, 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Pulso para indicador "live" */
+@keyframes gc-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+.animate-gc-pulse {
+  animation: gc-pulse 2s ease-in-out infinite;
+}
+
+/* Texto com gradiente de acento */
+.text-accent-gradient {
+  background: linear-gradient(135deg, #CBFF4E 0%, #8FE03D 60%, #5DBA2E 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

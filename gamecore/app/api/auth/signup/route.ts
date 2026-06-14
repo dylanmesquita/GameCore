@@ -26,7 +26,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await connectDB();
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error("[signup connectDB]", err);
+      return NextResponse.json(
+        { error: "Erro ao conectar ao banco de dados. Verifique MONGODB_URI e credenciais." },
+        { status: 500 }
+      );
+    }
 
     const existing = await User.findOne({ email: email.toLowerCase() });
     if (existing) {
@@ -50,11 +58,16 @@ export async function POST(req: NextRequest) {
       { user: { id: user.id, name: user.name, email: user.email } },
       { status: 201 }
     );
-  } catch (err) {
+  } catch (err: any) {
     console.error("[signup]", err);
-    return NextResponse.json(
-      { error: "Erro ao criar a conta." },
-      { status: 500 }
-    );
+    const msg =
+      err?.errorResponse?.errmsg || err?.message || String(err || "");
+    if (String(msg).toLowerCase().includes("auth") || String(msg).toLowerCase().includes("authentication")) {
+      return NextResponse.json(
+        { error: "Erro ao conectar ao banco de dados. Verifique MONGODB_URI e credenciais." },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json({ error: "Erro ao criar a conta." }, { status: 500 });
   }
 }

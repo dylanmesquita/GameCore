@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
-const URI = process.env.URI;
-const DB_NAME = process.env.MONGODB_DB || "gamecore";
+// Support multiple common env names for the MongoDB connection string.
+const MONGODB_URI =
+  process.env.MONGODB_URI || process.env.URI || process.env.MONGO_URI || process.env.DATABASE_URL;
+const DB_NAME = process.env.MONGODB_DB || process.env.MONGODB_DATABASE || "gamecore";
 
-if (!URI) {
+if (!MONGODB_URI) {
   throw new Error(
-    "A variável de ambiente URI (string de conexão do MongoDB) não está definida no .env"
+    "A variável de ambiente MONGODB_URI (ou URI) não está definida. Adicione MONGODB_URI no .env.local"
   );
 }
 
@@ -31,9 +33,10 @@ export async function connectDB(): Promise<typeof mongoose> {
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(URI as string, {
+    cached.promise = mongoose.connect(MONGODB_URI as string, {
       dbName: DB_NAME,
       bufferCommands: false,
+      // serverSelectionTimeoutMS: 5000, // optional tuning
     });
   }
 

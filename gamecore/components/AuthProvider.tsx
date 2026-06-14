@@ -52,11 +52,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Carrega a sessão atual ao montar
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((r) => r.json())
-      .then((data) => setUser(data.user ?? null))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
+        try {
+          const data = await res.json();
+          setUser(data.user ?? null);
+        } catch (err) {
+          // Non-JSON response (likely HTML error page) — log and clear user
+          console.error("/api/auth/me returned invalid JSON:", err);
+          setUser(null);
+        }
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   // Carrega os jogos salvos sempre que o usuário muda
@@ -76,6 +92,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isSaved = useCallback((gameId: number) => savedIds.has(gameId), [savedIds]);
 
+  // Helper to parse API responses that might not be valid JSON (dev server errors
+  // sometimes return HTML). Returns parsed JSON or throws with a helpful message.
+  const parseApiResponse = async (res: Response) => {
+    const ct = res.headers.get("content-type") || "";
+    if (ct.includes("application/json")) {
+      try {
+        return await res.json();
+      } catch (err) {
+        const text = await res.text();
+        throw new Error(text || "Invalid JSON response from server.");
+      }
+    }
+    const text = await res.text();
+    if (text.trim().startsWith("<!DOCTYPE") || text.trim().startsWith("<html")) {
+      throw new Error("Server error (HTML response). Check your dev server logs.");
+    }
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(text || "Invalid server response.");
+    }
+  };
+
   const toggleSave = useCallback(
     async (game: SaveGamePayload): Promise<boolean> => {
       if (!user) {
@@ -87,8 +126,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(game),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erro ao salvar.");
+      const data = await parseApiResponse(res);
+      if (!res.ok) throw new Error(data?.error || "Erro ao salvar.");
       setSavedIds((prev) => {
         const next = new Set(prev);
         if (data.saved) next.add(game.gameId);
@@ -110,8 +149,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Erro ao entrar.");
+    const data = await parseApiResponse(res);
+    if (!res.ok) throw new Error(data?.error || "Erro ao entrar.");
     setUser(data.user);
     closeAuth();
   };
@@ -122,8 +161,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Erro ao criar conta.");
+    const data = await parseApiResponse(res);
+    if (!res.ok) throw new Error(data?.error || "Erro ao criar conta.");
     setUser(data.user);
     closeAuth();
   };

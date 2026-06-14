@@ -15,7 +15,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await connectDB();
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error("[login connectDB]", err);
+      return NextResponse.json(
+        { error: "Erro ao conectar ao banco de dados. Verifique MONGODB_URI e credenciais." },
+        { status: 500 }
+      );
+    }
 
     const user = await User.findOne({ email: String(email).toLowerCase().trim() });
     if (!user) {
@@ -39,8 +47,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       user: { id: user.id, name: user.name, email: user.email },
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("[login]", err);
+    const msg = err?.errorResponse?.errmsg || err?.message || String(err || "");
+    if (String(msg).toLowerCase().includes("auth") || String(msg).toLowerCase().includes("authentication")) {
+      return NextResponse.json(
+        { error: "Erro ao conectar ao banco de dados. Verifique MONGODB_URI e credenciais." },
+        { status: 500 }
+      );
+    }
     return NextResponse.json({ error: "Erro ao entrar." }, { status: 500 });
   }
 }
