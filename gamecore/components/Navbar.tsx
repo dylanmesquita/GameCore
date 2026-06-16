@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LogOut, Library, User as UserIcon } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -9,6 +10,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   const { user, loading, openAuth, logout } = useAuth();
 
   useEffect(() => {
@@ -50,15 +52,26 @@ export function Navbar() {
             <span className="text-white">Core</span>
           </span>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <a href="#" className="text-white relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-[#CBFF4E] after:rounded-full">
-              Descobrir
-            </a>
-            <a href="/library" className="text-zinc-500 hover:text-zinc-300 transition-colors">
-              Biblioteca
-            </a>
-            <a href="#" className="text-zinc-500 hover:text-zinc-300 transition-colors">
-              Comunidade
-            </a>
+            {[
+              { href: "/", label: "Descobrir" },
+              { href: "/library", label: "Biblioteca" },
+            ].map(({ href, label }) => {
+              const active =
+                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`relative transition-colors after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:rounded-full after:bg-[#CBFF4E] after:transition-all after:duration-300 ${
+                    active
+                      ? "text-white after:w-full"
+                      : "text-zinc-500 hover:text-zinc-300 after:w-0 hover:after:w-full"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
         {user ? (
