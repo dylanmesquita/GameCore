@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Library, User as UserIcon } from "lucide-react";
+import { LogOut, Library, User as UserIcon, Users } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
 export function Navbar() {
@@ -54,6 +54,7 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             {[
               { href: "/", label: "Descobrir" },
+              { href: "/community", label: "Comunidade" },
               { href: "/library", label: "Biblioteca" },
             ].map(({ href, label }) => {
               const active =
@@ -91,6 +92,22 @@ export function Navbar() {
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-[#0A0A0A] border border-white/10 rounded-lg p-2 shadow-lg z-50">
                 <Link
+                  href="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 rounded"
+                >
+                  <UserIcon size={16} />
+                  Meu Perfil
+                </Link>
+                <Link
+                  href="/community"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 rounded"
+                >
+                  <Users size={16} />
+                  Comunidade
+                </Link>
+                <Link
                   href="/library"
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:bg-white/5 rounded"
@@ -98,6 +115,7 @@ export function Navbar() {
                   <Library size={16} />
                   Biblioteca
                 </Link>
+                <div className="my-1 border-t border-white/5" />
                 <button
                   onClick={async () => {
                     setMenuOpen(false);

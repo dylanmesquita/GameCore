@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Comments } from "@/components/Comments";
 import { SaveButton } from "@/components/SaveButton";
+import { StarRating } from "@/components/StarRating";
 
 const API_KEY = "2843b69740b44def938ac6a8fe2b5c9f";
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -184,6 +185,9 @@ export default function GamePage() {
 
         {/* Right column */}
         <aside className="space-y-6">
+          {/* Avaliação por estrelas da comunidade GameCore */}
+          <StarRating gameId={game.id} />
+
           <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/6">
             <h3 className="text-[10px] font-mono font-bold text-zinc-600 mb-4 uppercase tracking-[0.2em]">
               Plataformas

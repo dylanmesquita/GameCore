@@ -22,6 +22,13 @@ export interface SaveGamePayload {
   rating: number;
 }
 
+export interface ProfileUpdate {
+  name?: string;
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
@@ -32,6 +39,10 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  /** Atualiza o usuário em contexto (ex.: após editar o perfil). */
+  updateUser: (user: AuthUser) => void;
+  /** Salva alterações de perfil (nome, e-mail, senha) e sincroniza o contexto. */
+  updateProfile: (data: ProfileUpdate) => Promise<void>;
   /** Conjunto de gameIds salvos pelo usuário (carregado uma vez). */
   savedIds: Set<number>;
   isSaved: (gameId: number) => boolean;
@@ -172,6 +183,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = useCallback((u: AuthUser) => setUser(u), []);
+
+  const updateProfile = useCallback(async (data: ProfileUpdate) => {
+    const res = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const parsed = await parseApiResponse(res);
+    if (!res.ok) throw new Error(parsed?.error || "Erro ao atualizar perfil.");
+    setUser(parsed.user);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -183,6 +207,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         signup,
         logout,
+        updateUser,
+        updateProfile,
         savedIds,
         isSaved,
         toggleSave,
