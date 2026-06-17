@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Users, Star, MessageSquare, Loader2, TrendingUp } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 
-const API_KEY = "2843b69740b44def938ac6a8fe2b5c9f";
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 interface RecentComment {

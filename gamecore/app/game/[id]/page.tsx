@@ -9,7 +9,7 @@ import { Comments } from "@/components/Comments";
 import { SaveButton } from "@/components/SaveButton";
 import { StarRating } from "@/components/StarRating";
 
-const API_KEY = "2843b69740b44def938ac6a8fe2b5c9f";
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 interface GameDetails {
