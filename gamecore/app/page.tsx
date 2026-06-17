@@ -7,8 +7,8 @@ import { HeroSearch } from "@/components/HeroSearch";
 import { GameGrid } from "@/components/GameGrid";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const API_KEY = "2843b69740b44def938ac6a8fe2b5c9f";
 const PAGE_SIZE = 40; // máximo permitido pela RAWG API
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY
 
 const GENRES = [
   { id: "", name: "Todos" },
@@ -41,7 +41,6 @@ export default function GameCore() {
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  // Reseta para página 1 quando filtros mudam
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, activeGenre]);
@@ -51,8 +50,6 @@ export default function GameCore() {
     const timer = setTimeout(() => {
       let url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=${PAGE_SIZE}&page=${currentPage}`;
       if (searchQuery) {
-        // Ao buscar, deixamos a RAWG ordenar por relevância (não por nota),
-        // senão os resultados mais "famosos" sobrepõem os mais relevantes.
         url += `&search=${encodeURIComponent(searchQuery)}&search_precise=true`;
       } else {
         url += `&ordering=-rating`;
